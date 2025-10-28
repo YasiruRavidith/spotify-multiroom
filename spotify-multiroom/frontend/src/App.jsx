@@ -26,7 +26,8 @@ function App() {
     playerRef
   } = useSpotifyPlayer(authenticated, API_URL);
 
-  useWebSocket(authenticated, playerReady, WS_URL, () => {});
+  // WebSocket disabled - each browser instance works independently
+  // useWebSocket(authenticated, playerReady, WS_URL, () => {});
 
   useEffect(() => {
     if (sessionStorage.getItem('auth') === 'true') {
