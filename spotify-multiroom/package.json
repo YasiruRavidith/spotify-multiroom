@@ -1,0 +1,21 @@
+{
+  "name": "spotify-multiroom",
+  "version": "1.0.0",
+  "description": "Multi-room Spotify player with synchronized playback",
+  "scripts": {
+    "setup": "pwsh -File setup.ps1",
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "dev:backend": "cd backend && npm start",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build:frontend": "cd frontend && npm run build"
+  },
+  "keywords": [
+    "spotify",
+    "multiroom",
+    "audio",
+    "webplayback",
+    "synchronized"
+  ],
+  "author": "",
+  "license": "ISC"
+}
