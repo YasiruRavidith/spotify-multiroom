@@ -1,13 +1,60 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 
-const useSpotifyPlayer = (authenticated, API_URL) => {
+const useSpotifyPlayer = (authenticated, API_URL, onSync) => {
   const [deviceReady, setDeviceReady] = useState(false);
   const [playerReady, setPlayerReady] = useState(false);
   const [playbackState, setPlaybackState] = useState(null);
   const [error, setError] = useState('');
   const [audioActivated, setAudioActivated] = useState(false);
   const playerRef = useRef(null);
-  const wsRef = useRef(null);
+  const deviceIdRef = useRef(null);
+
+  // Expose sync function to external control
+  const syncPlayback = useCallback(async (trackUri, position, shouldPlay) => {
+    if (!playerRef.current || !deviceIdRef.current) return;
+
+    try {
+      // Get current state
+      const state = await playerRef.current.getCurrentState();
+      
+      // If different track, need to transfer and play
+      if (!state || state.track_window.current_track.uri !== trackUri) {
+        // Transfer playback to this device with the specific track
+        const tokenResponse = await fetch(`${API_URL}/api/token`);
+        const { accessToken } = await tokenResponse.json();
+        
+        await fetch('https://api.spotify.com/v1/me/player/play', {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            device_id: deviceIdRef.current,
+            uris: [trackUri],
+            position_ms: position
+          })
+        });
+      } else {
+        // Same track, just sync position
+        await playerRef.current.seek(position);
+        if (shouldPlay && state.paused) {
+          await playerRef.current.resume();
+        } else if (!shouldPlay && !state.paused) {
+          await playerRef.current.pause();
+        }
+      }
+    } catch (err) {
+      console.error('Sync error:', err);
+    }
+  }, [API_URL]);
+
+  // Expose sync function via callback
+  useEffect(() => {
+    if (onSync) {
+      onSync(syncPlayback);
+    }
+  }, [syncPlayback, onSync]);
 
   const initializePlayer = useCallback(async () => {
     try {
@@ -46,6 +93,7 @@ const useSpotifyPlayer = (authenticated, API_URL) => {
       // Ready
       player.addListener('ready', ({ device_id }) => {
         console.log('Ready with Device ID', device_id);
+        deviceIdRef.current = device_id;
         setDeviceReady(true);
         setPlayerReady(true);
         
@@ -86,17 +134,6 @@ const useSpotifyPlayer = (authenticated, API_URL) => {
         // Only mark as activated, don't auto-resume
         if (!state.paused) {
           setAudioActivated(true);
-        }
-
-        if (wsRef.current && wsRef.current.readyState === 1) {
-          wsRef.current.send(JSON.stringify({
-            type: 'playback_update',
-            data: {
-              isPlaying: !state.paused,
-              progress: state.position,
-              track: track
-            }
-          }));
         }
       });
 
@@ -154,8 +191,7 @@ const useSpotifyPlayer = (authenticated, API_URL) => {
     error,
     audioActivated,
     setAudioActivated,
-    playerRef,
-    wsRef
+    playerRef
   };
 };
 

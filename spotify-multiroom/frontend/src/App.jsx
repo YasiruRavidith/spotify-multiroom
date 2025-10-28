@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, Heart, Volume2, MoreHorizontal, LogOut } from 'lucide-react';
 import PasswordScreen from './components/PasswordScreen';
 import StatusMessage from './components/StatusMessage';
@@ -15,45 +15,9 @@ function App() {
   const [shuffleOn, setShuffleOn] = useState(false);
   const [repeatMode, setRepeatMode] = useState(0);
   const [currentProgress, setCurrentProgress] = useState(0);
-  const [isMasterTab, setIsMasterTab] = useState(false);
+  const syncFunctionRef = useRef(null);
 
-  // Check if this should be the master tab (plays audio)
-  useEffect(() => {
-    const checkMasterTab = () => {
-      const masterTabId = localStorage.getItem('spotify_master_tab');
-      const myTabId = sessionStorage.getItem('my_tab_id') || Date.now().toString();
-      
-      if (!sessionStorage.getItem('my_tab_id')) {
-        sessionStorage.setItem('my_tab_id', myTabId);
-      }
-
-      // If no master or master is stale (>10 sec), become master
-      const masterTimestamp = localStorage.getItem('spotify_master_timestamp');
-      const isStale = !masterTimestamp || (Date.now() - parseInt(masterTimestamp)) > 10000;
-      
-      if (!masterTabId || isStale) {
-        localStorage.setItem('spotify_master_tab', myTabId);
-        localStorage.setItem('spotify_master_timestamp', Date.now().toString());
-        setIsMasterTab(true);
-      } else if (masterTabId === myTabId) {
-        setIsMasterTab(true);
-      } else {
-        setIsMasterTab(false);
-      }
-    };
-
-    checkMasterTab();
-    const interval = setInterval(() => {
-      if (isMasterTab) {
-        // Update timestamp to keep master alive
-        localStorage.setItem('spotify_master_timestamp', Date.now().toString());
-      }
-      checkMasterTab();
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [isMasterTab]);
-
+  // All tabs initialize player with sync capability
   const {
     deviceReady,
     playerReady,
@@ -62,13 +26,31 @@ function App() {
     audioActivated,
     setAudioActivated,
     playerRef
-  } = useSpotifyPlayer(authenticated && isMasterTab, API_URL); // Only master tab initializes player
+  } = useSpotifyPlayer(authenticated, API_URL, (syncFunc) => {
+    syncFunctionRef.current = syncFunc;
+  });
 
-  // Re-enable WebSocket for all tabs to receive playback state
-  const { wsPlaybackState } = useWebSocket(authenticated, playerReady, WS_URL, () => {});
+  // WebSocket handles sync commands
+  const { broadcastSync } = useWebSocket(authenticated, WS_URL, (syncData) => {
+    // Received sync command from another device
+    if (syncFunctionRef.current) {
+      syncFunctionRef.current(syncData.trackUri, syncData.position, syncData.isPlaying);
+    }
+  });
 
-  // Use WebSocket state for non-master tabs, player state for master tab
-  const displayState = isMasterTab ? playbackState : (wsPlaybackState || playbackState);
+  // Use local playback state
+  const displayState = playbackState;
+
+  // Broadcast state changes to sync other devices
+  useEffect(() => {
+    if (displayState?.track && broadcastSync) {
+      broadcastSync(
+        displayState.track.uri,
+        currentProgress,
+        displayState.isPlaying
+      );
+    }
+  }, [displayState?.track?.uri, displayState?.isPlaying, broadcastSync, currentProgress]);
 
   useEffect(() => {
     if (sessionStorage.getItem('auth') === 'true') {
@@ -191,17 +173,11 @@ function App() {
           <MoreHorizontal size={24} />
         </button>
         <div className="flex items-center gap-4">
-          {/* Master/Slave indicator */}
-          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${isMasterTab ? 'bg-green-500/20' : 'bg-blue-500/20'}`}>
-            <div className={`w-2 h-2 rounded-full ${isMasterTab ? 'bg-green-500' : 'bg-blue-500'} animate-pulse`}></div>
-            <span className={`text-xs font-semibold ${isMasterTab ? 'text-green-400' : 'text-blue-400'}`}>
-              {isMasterTab ? '🎵 Master (Playing Audio)' : '📱 Display Only'}
-            </span>
-          </div>
+          {/* Connection Status */}
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10">
             <div className={`w-2 h-2 rounded-full ${deviceReady ? 'bg-green-500' : 'bg-yellow-500'} animate-pulse`}></div>
             <span className={`text-xs font-semibold ${deviceReady ? 'text-green-400' : 'text-yellow-400'}`}>
-              {deviceReady ? 'Ready' : 'Connecting...'}
+              {deviceReady ? '🎵 Playing' : 'Connecting...'}
             </span>
           </div>
           <button 
@@ -216,14 +192,9 @@ function App() {
       </div>
 
       {error && <StatusMessage type="error" title={error} />}
-      {!audioActivated && deviceReady && isMasterTab && (
+      {!audioActivated && deviceReady && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-500/90 text-white px-4 py-2 rounded-lg text-sm z-50">
-          🎵 Master Tab - Click anywhere to activate audio
-        </div>
-      )}
-      {!isMasterTab && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-blue-500/90 text-white px-4 py-2 rounded-lg text-sm z-50">
-          📱 Display Tab - Audio plays from master tab
+          🎵 Click anywhere to activate audio
         </div>
       )}
 

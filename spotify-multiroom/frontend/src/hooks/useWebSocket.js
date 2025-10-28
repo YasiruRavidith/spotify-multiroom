@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-const useWebSocket = (authenticated, playerReady, WS_URL, setPlaybackState) => {
+const useWebSocket = (authenticated, WS_URL, onSyncCommand) => {
   const wsRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
   const [wsPlaybackState, setWsPlaybackState] = useState(null);
@@ -22,9 +22,11 @@ const useWebSocket = (authenticated, playerReady, WS_URL, setPlaybackState) => {
         if (message.type === 'playback' || message.type === 'playback_update') {
           if (message.data) {
             setWsPlaybackState(message.data);
-            if (setPlaybackState) {
-              setPlaybackState(message.data);
-            }
+          }
+        } else if (message.type === 'sync') {
+          // Sync command to synchronize all devices
+          if (onSyncCommand) {
+            onSyncCommand(message.data);
           }
         }
       };
@@ -49,9 +51,23 @@ const useWebSocket = (authenticated, playerReady, WS_URL, setPlaybackState) => {
         clearTimeout(reconnectTimeoutRef.current);
       }
     };
-  }, [authenticated, WS_URL, setPlaybackState]);
+  }, [authenticated, WS_URL, onSyncCommand]);
 
-  return { wsRef, wsPlaybackState };
+  // Function to broadcast sync command
+  const broadcastSync = (trackUri, position, isPlaying) => {
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify({
+        type: 'sync',
+        data: {
+          trackUri,
+          position,
+          isPlaying
+        }
+      }));
+    }
+  };
+
+  return { wsRef, wsPlaybackState, broadcastSync };
 };
 
 export default useWebSocket;

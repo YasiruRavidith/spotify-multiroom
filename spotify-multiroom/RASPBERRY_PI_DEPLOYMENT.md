@@ -208,7 +208,7 @@ git clone https://github.com/YasiruRavidith/spotify-multiroom.git
 ### 7.3 Navigate to Backend
 
 ```bash
-cd spotify-multiroom/backend
+cd spotify-multiroom/spotify-multiroom/backend
 ```
 
 ---
@@ -241,7 +241,7 @@ SPOTIFY_CLIENT_SECRET=378a168c109a4ca8a32e4adef3749190
 SITE_PASSWORD=yasiru2003
 DEVICE_NAME=Spotify Multi Room
 PORT=3000
-REDIRECT_URI=http://YOUR_PI_IP:3000/callback
+REDIRECT_URI=http://192.168.1.105:3000/callback
 ```
 
 ⚠️ **Replace `YOUR_PI_IP`** with your Raspberry Pi's local IP (e.g., `192.168.1.50`)
@@ -373,6 +373,9 @@ Created tunnel spotify-backend with id: abc123...
 
 📋 **Copy the tunnel ID!**
 
+Created tunnel spotify-backend with id 61f60007-21b9-4e5c-87d9-e7af2d57d6cd
+
+https://spotify-backend-9fe3749f-6461-4954-aaf7-5bcd18730ed5.cfargotunnel.com
 ### 12.3 Create Configuration File
 
 ```bash

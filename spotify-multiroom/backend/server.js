@@ -138,6 +138,23 @@ wss.on('connection', (ws) => {
     ws.send(JSON.stringify({ type: 'playback', data: currentPlaybackState }));
   }
 
+  ws.on('message', (message) => {
+    try {
+      const data = JSON.parse(message);
+      
+      // Broadcast sync commands to all OTHER clients
+      if (data.type === 'sync') {
+        clients.forEach(client => {
+          if (client !== ws && client.readyState === 1) {
+            client.send(JSON.stringify(data));
+          }
+        });
+      }
+    } catch (err) {
+      console.error('WebSocket message error:', err);
+    }
+  });
+
   ws.on('close', () => {
     clients.delete(ws);
     console.log('Client disconnected');
