@@ -15,6 +15,44 @@ function App() {
   const [shuffleOn, setShuffleOn] = useState(false);
   const [repeatMode, setRepeatMode] = useState(0);
   const [currentProgress, setCurrentProgress] = useState(0);
+  const [isMasterTab, setIsMasterTab] = useState(false);
+
+  // Check if this should be the master tab (plays audio)
+  useEffect(() => {
+    const checkMasterTab = () => {
+      const masterTabId = localStorage.getItem('spotify_master_tab');
+      const myTabId = sessionStorage.getItem('my_tab_id') || Date.now().toString();
+      
+      if (!sessionStorage.getItem('my_tab_id')) {
+        sessionStorage.setItem('my_tab_id', myTabId);
+      }
+
+      // If no master or master is stale (>10 sec), become master
+      const masterTimestamp = localStorage.getItem('spotify_master_timestamp');
+      const isStale = !masterTimestamp || (Date.now() - parseInt(masterTimestamp)) > 10000;
+      
+      if (!masterTabId || isStale) {
+        localStorage.setItem('spotify_master_tab', myTabId);
+        localStorage.setItem('spotify_master_timestamp', Date.now().toString());
+        setIsMasterTab(true);
+      } else if (masterTabId === myTabId) {
+        setIsMasterTab(true);
+      } else {
+        setIsMasterTab(false);
+      }
+    };
+
+    checkMasterTab();
+    const interval = setInterval(() => {
+      if (isMasterTab) {
+        // Update timestamp to keep master alive
+        localStorage.setItem('spotify_master_timestamp', Date.now().toString());
+      }
+      checkMasterTab();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [isMasterTab]);
 
   const {
     deviceReady,
@@ -24,10 +62,13 @@ function App() {
     audioActivated,
     setAudioActivated,
     playerRef
-  } = useSpotifyPlayer(authenticated, API_URL);
+  } = useSpotifyPlayer(authenticated && isMasterTab, API_URL); // Only master tab initializes player
 
-  // WebSocket disabled - each browser instance works independently
-  // useWebSocket(authenticated, playerReady, WS_URL, () => {});
+  // Re-enable WebSocket for all tabs to receive playback state
+  const { wsPlaybackState } = useWebSocket(authenticated, playerReady, WS_URL, () => {});
+
+  // Use WebSocket state for non-master tabs, player state for master tab
+  const displayState = isMasterTab ? playbackState : (wsPlaybackState || playbackState);
 
   useEffect(() => {
     if (sessionStorage.getItem('auth') === 'true') {
@@ -57,20 +98,20 @@ function App() {
 
   // Update progress every second when playing
   useEffect(() => {
-    if (playbackState?.isPlaying) {
+    if (displayState?.isPlaying) {
       const interval = setInterval(() => {
-        setCurrentProgress(prev => Math.min(prev + 1000, playbackState.track.duration));
+        setCurrentProgress(prev => Math.min(prev + 1000, displayState.track.duration));
       }, 1000);
       return () => clearInterval(interval);
     }
-  }, [playbackState?.isPlaying, playbackState?.track?.duration]);
+  }, [displayState?.isPlaying, displayState?.track?.duration]);
 
   // Sync progress with playback state
   useEffect(() => {
-    if (playbackState?.progress !== undefined) {
-      setCurrentProgress(playbackState.progress);
+    if (displayState?.progress !== undefined) {
+      setCurrentProgress(displayState.progress);
     }
-  }, [playbackState?.progress]);
+  }, [displayState?.progress]);
 
   const activateAudio = () => {
     if (!audioActivated && playerRef.current) {
@@ -138,8 +179,8 @@ function App() {
     return <PasswordScreen onAuthenticate={() => setAuthenticated(true)} />;
   }
 
-  const progressPercentage = playbackState?.track 
-    ? (currentProgress / playbackState.track.duration) * 100 
+  const progressPercentage = displayState?.track 
+    ? (currentProgress / displayState.track.duration) * 100 
     : 0;
 
   return (
@@ -150,6 +191,13 @@ function App() {
           <MoreHorizontal size={24} />
         </button>
         <div className="flex items-center gap-4">
+          {/* Master/Slave indicator */}
+          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${isMasterTab ? 'bg-green-500/20' : 'bg-blue-500/20'}`}>
+            <div className={`w-2 h-2 rounded-full ${isMasterTab ? 'bg-green-500' : 'bg-blue-500'} animate-pulse`}></div>
+            <span className={`text-xs font-semibold ${isMasterTab ? 'text-green-400' : 'text-blue-400'}`}>
+              {isMasterTab ? '🎵 Master (Playing Audio)' : '📱 Display Only'}
+            </span>
+          </div>
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10">
             <div className={`w-2 h-2 rounded-full ${deviceReady ? 'bg-green-500' : 'bg-yellow-500'} animate-pulse`}></div>
             <span className={`text-xs font-semibold ${deviceReady ? 'text-green-400' : 'text-yellow-400'}`}>
@@ -168,22 +216,27 @@ function App() {
       </div>
 
       {error && <StatusMessage type="error" title={error} />}
-      {!audioActivated && deviceReady && (
+      {!audioActivated && deviceReady && isMasterTab && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-500/90 text-white px-4 py-2 rounded-lg text-sm z-50">
-          Click anywhere to activate audio
+          🎵 Master Tab - Click anywhere to activate audio
+        </div>
+      )}
+      {!isMasterTab && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-blue-500/90 text-white px-4 py-2 rounded-lg text-sm z-50">
+          📱 Display Tab - Audio plays from master tab
         </div>
       )}
 
       {/* Main Content */}
       <div className="flex-1 flex items-center justify-center w-full max-w-7xl gap-16">
-        {playbackState?.track ? (
+        {displayState?.track ? (
           <>
             {/* Left Side - Controls and Info */}
             <div className="flex-1 max-w-2xl">
               {/* Song Info */}
               <div className="mb-12">
-                <h1 className="text-white text-6xl font-bold mb-3 leading-tight">{playbackState.track.name}</h1>
-                <p className="text-white/70 text-2xl">{playbackState.track.artists}</p>
+                <h1 className="text-white text-6xl font-bold mb-3 leading-tight">{displayState.track.name}</h1>
+                <p className="text-white/70 text-2xl">{displayState.track.artists}</p>
               </div>
 
               {/* Progress Bar */}
@@ -198,7 +251,7 @@ function App() {
                 </div>
                 <div className="flex justify-between text-white/60 text-sm">
                   <span>{formatTime(currentProgress)}</span>
-                  <span>{formatTime(playbackState.track.duration)}</span>
+                  <span>{formatTime(displayState.track.duration)}</span>
                 </div>
               </div>
 
@@ -233,7 +286,7 @@ function App() {
                     }}
                     className="w-14 h-14 rounded-full bg-white hover:scale-105 transition-transform flex items-center justify-center shadow-xl"
                   >
-                    {playbackState.isPlaying ? (
+                    {displayState.isPlaying ? (
                       <Pause size={24} className="text-black" fill="black" />
                     ) : (
                       <Play size={24} className="text-black ml-0.5" fill="black" />
@@ -288,12 +341,12 @@ function App() {
               <div className="relative group">
                 <div className="absolute -inset-8 bg-gradient-to-br from-purple-500/30 via-pink-500/30 to-orange-500/20 rounded-3xl blur-3xl"></div>
                 <img
-                  src={playbackState.track.image}
-                  alt={playbackState.track.name}
+                  src={displayState.track.image}
+                  alt={displayState.track.name}
                   className="relative w-[480px] h-[480px] object-cover rounded-lg shadow-2xl"
                 />
                 {/* Playing indicator */}
-                {playbackState.isPlaying && (
+                {displayState.isPlaying && (
                   <div className="absolute bottom-4 right-4 bg-green-500 rounded-lg p-3 shadow-xl">
                     <div className="flex gap-1 items-end h-4">
                       <div className="w-1 bg-white rounded-full animate-pulse" style={{height: '60%'}}></div>

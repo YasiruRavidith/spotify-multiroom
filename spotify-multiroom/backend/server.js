@@ -16,7 +16,7 @@ app.use(express.json());
 
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
-const REDIRECT_URI = process.env.REDIRECT_URI || 'https://spotify-multiroom.vercel.app/callback';
+const REDIRECT_URI = process.env.REDIRECT_URI || 'https://spotify-multiroom-backend.vercel.app/callback';
 const SITE_PASSWORD = process.env.SITE_PASSWORD;
 const DEVICE_NAME = process.env.DEVICE_NAME || 'Spotify Multi-Room';
 
