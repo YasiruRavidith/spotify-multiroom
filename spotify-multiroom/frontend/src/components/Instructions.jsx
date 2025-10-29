@@ -5,7 +5,7 @@ const Instructions = () => {
     { icon: <FaMobileAlt />, text: 'Open Spotify on your phone or computer' },
     { icon: <FaPlay />, text: 'Play any song' },
     { icon: <FaListUl />, text: 'Tap the "Devices Available" icon' },
-    { icon: <FaMousePointer />, text: 'Select "Spotify Public Player"' },
+    { icon: <FaMousePointer />, text: 'Select "Web Potify"' },
     { icon: <FaVolumeUp />, text: 'Music will start playing on ALL devices with this page open' }
   ];
 

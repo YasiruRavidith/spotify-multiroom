@@ -29,7 +29,7 @@ export default function NowPlaying({
         </div>
         <p className="text-white/70 text-xl">No track playing</p>
         {deviceReady && (
-          <p className="text-white/40 text-sm mt-2">Open Spotify and select "Spotify Multi Room"</p>
+          <p className="text-white/40 text-sm mt-2">Open Spotify and select "Web Potify Player"</p>
         )}
       </div>
     );

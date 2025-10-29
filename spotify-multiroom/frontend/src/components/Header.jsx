@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import { MoreHorizontal, LogOut } from 'lucide-react';
+import DeviceSwitcher from './DeviceSwitcher';
 
-export default function Header({ deviceReady, onLogout }) {
+export default function Header({ deviceReady, onLogout, currentDeviceId }) {
   return (
     <div 
       className="w-full max-w-7xl flex items-center justify-between px-4 md:px-0"
@@ -17,6 +18,9 @@ export default function Header({ deviceReady, onLogout }) {
         <span className="text-sm hidden sm:inline">Logout</span>
       </button>
       <div className="flex items-center gap-2 md:gap-4" >
+        {/* Device Switcher */}
+        <DeviceSwitcher currentDeviceId={currentDeviceId} />
+        
         {/* Connection Status */}
         <div 
           className="flex items-center rounded-full bg-white/10 ml-5"
@@ -34,6 +38,7 @@ export default function Header({ deviceReady, onLogout }) {
 
 Header.propTypes = {
   deviceReady: PropTypes.bool.isRequired,
-  onLogout: PropTypes.func.isRequired
+  onLogout: PropTypes.func.isRequired,
+  currentDeviceId: PropTypes.string
 };
 

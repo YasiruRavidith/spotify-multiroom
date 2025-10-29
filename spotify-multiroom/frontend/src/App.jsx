@@ -28,7 +28,8 @@ function App() {
     error,
     audioActivated,
     setAudioActivated,
-    playerRef
+    playerRef,
+    deviceId
   } = useSpotifyPlayer(authenticated, API_URL, (syncFunc) => {
     syncFunctionRef.current = syncFunc;
   });
@@ -225,7 +226,7 @@ function App() {
   return (
     <div className="h-screen bg-linear-to-b from-purple-900 via-gray-900 to-black flex flex-col items-center justify-between p-8 overflow-hidden" onClick={activateAudio}>
       {/* Top Bar */}
-      <Header deviceReady={deviceReady} onLogout={handleLogout} />
+      <Header deviceReady={deviceReady} onLogout={handleLogout} currentDeviceId={deviceId} />
 
       {error && <StatusMessage type="error" title={error} />}
       {!audioActivated && deviceReady && (

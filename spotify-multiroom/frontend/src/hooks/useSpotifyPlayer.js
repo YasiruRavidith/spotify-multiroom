@@ -62,7 +62,7 @@ const useSpotifyPlayer = (authenticated, API_URL, onSync) => {
       await tokenResponse.json();
 
       const player = new window.Spotify.Player({
-        name: 'Spotify Public Player',
+        name: 'Web Potify Player',
         getOAuthToken: async (cb) => {
           const response = await fetch(`${API_URL}/api/token`);
           const data = await response.json();
@@ -193,7 +193,8 @@ const useSpotifyPlayer = (authenticated, API_URL, onSync) => {
     error,
     audioActivated,
     setAudioActivated,
-    playerRef
+    playerRef,
+    deviceId: deviceIdRef.current
   };
 };
 

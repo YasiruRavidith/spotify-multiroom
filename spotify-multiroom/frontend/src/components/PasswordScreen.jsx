@@ -78,7 +78,7 @@ const PasswordScreen = ({ onAuthenticate }) => {
               letterSpacing: '-0.5px'
             }}
           >
-            Spotify Multi Room
+            Web Potify
           </h1>
           <p 
             style={{
