@@ -3,7 +3,11 @@
 
 A beautiful, full-featured web-based Spotify player that brings the premium Spotify experience to your browser. Built with React and the Spotify Web Playback SDK, this project allows you to control Spotify playback across multiple devices simultaneously.
 
-![Web Potify](spotify-multiroom/frontend/public/spotify.png)
+<p align="center">
+  <kbd>
+    <img src="spotify-multiroom/frontend/public/spotify.png" alt="Web Potify" width="200">
+  </kbd>
+</p>
 
 ## 🌟 Features
 
@@ -41,7 +45,7 @@ A beautiful, full-featured web-based Spotify player that brings the premium Spot
 
 | Device Switcher | Password Screen | Now Playing |
 |:---:|:---:|:---:|
-| ![Device Switcher](https://github.com/user-attachments/assets/033b0235-6e89-44d4-9f17-e49f64b24e9f) | ![Password Screen](https://github.com/user-attachments/assets/4b4a13eb-e7fb-4eae-901a-8f1fe7b82792) | ![Now Playing](https://github.com/user-attachments/assets/c8945d69-d0e9-4c86-9eff-c393aad71901) |
+| ![Device Switcher](https://github.com/user-attachments/assets/4b4a13eb-e7fb-4eae-901a-8f1fe7b82792) | ![Password Screen](https://github.com/user-attachments/assets/c8945d69-d0e9-4c86-9eff-c393aad71901) | ![Now Playing](https://github.com/user-attachments/assets/033b0235-6e89-44d4-9f17-e49f64b24e9f) |
 | *Switch between devices* | *Secure password entry* | *Full playback control* |
 
 **What you see in the screenshots:**
