@@ -1,7 +1,8 @@
 ﻿import { useState, useEffect, useRef } from 'react';
-import { Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, Heart, Volume2, MoreHorizontal, LogOut } from 'lucide-react';
 import PasswordScreen from './components/PasswordScreen';
 import StatusMessage from './components/StatusMessage';
+import Header from './components/Header';
+import NowPlaying from './components/NowPlaying';
 import useSpotifyPlayer from './hooks/useSpotifyPlayer';
 import useWebSocket from './hooks/useWebSocket';
 
@@ -20,7 +21,6 @@ function App() {
   // All tabs initialize player with sync capability
   const {
     deviceReady,
-    playerReady,
     playbackState,
     error,
     audioActivated,
@@ -43,7 +43,7 @@ function App() {
 
   // Broadcast state changes to sync other devices
   useEffect(() => {
-    if (displayState?.track && broadcastSync) {
+    if (displayState?.track?.uri && broadcastSync) {
       broadcastSync(
         displayState.track.uri,
         currentProgress,
@@ -64,7 +64,7 @@ function App() {
       try {
         await fetch(`${API_URL}/api/ping`);
         console.log('🏓 Backend ping successful');
-      } catch (error) {
+      } catch {
         console.log('🏓 Backend ping failed (may be sleeping)');
       }
     };
@@ -161,35 +161,10 @@ function App() {
     return <PasswordScreen onAuthenticate={() => setAuthenticated(true)} />;
   }
 
-  const progressPercentage = displayState?.track 
-    ? (currentProgress / displayState.track.duration) * 100 
-    : 0;
-
   return (
-    <div className="h-screen bg-gradient-to-b from-purple-900 via-gray-900 to-black flex flex-col items-center justify-between p-8 overflow-hidden" onClick={activateAudio}>
+    <div className="h-screen bg-linear-to-b from-purple-900 via-gray-900 to-black flex flex-col items-center justify-between p-8 overflow-hidden" onClick={activateAudio}>
       {/* Top Bar */}
-      <div className="w-full max-w-7xl flex items-center justify-between">
-        <button className="text-white/70 hover:text-white transition-colors">
-          <MoreHorizontal size={24} />
-        </button>
-        <div className="flex items-center gap-4">
-          {/* Connection Status */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10">
-            <div className={`w-2 h-2 rounded-full ${deviceReady ? 'bg-green-500' : 'bg-yellow-500'} animate-pulse`}></div>
-            <span className={`text-xs font-semibold ${deviceReady ? 'text-green-400' : 'text-yellow-400'}`}>
-              {deviceReady ? '🎵 Playing' : 'Connecting...'}
-            </span>
-          </div>
-          <button 
-            onClick={handleLogout}
-            className="text-white/70 hover:text-white transition-colors flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-white/10"
-            title="Logout"
-          >
-            <LogOut size={18} />
-            <span className="text-sm">Logout</span>
-          </button>
-        </div>
-      </div>
+      <Header deviceReady={deviceReady} onLogout={handleLogout} />
 
       {error && <StatusMessage type="error" title={error} />}
       {!audioActivated && deviceReady && (
@@ -200,147 +175,22 @@ function App() {
 
       {/* Main Content */}
       <div className="flex-1 flex items-center justify-center w-full max-w-7xl gap-16">
-        {displayState?.track ? (
-          <>
-            {/* Left Side - Controls and Info */}
-            <div className="flex-1 max-w-2xl">
-              {/* Song Info */}
-              <div className="mb-12">
-                <h1 className="text-white text-6xl font-bold mb-3 leading-tight">{displayState.track.name}</h1>
-                <p className="text-white/70 text-2xl">{displayState.track.artists}</p>
-              </div>
-
-              {/* Progress Bar */}
-              <div className="mb-10">
-                <div className="relative w-full bg-white/20 h-1.5 rounded-full mb-2 cursor-pointer group">
-                  <div
-                    className="absolute top-0 left-0 h-full bg-white rounded-full transition-all duration-300"
-                    style={{ width: `${progressPercentage}%` }}
-                  >
-                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  </div>
-                </div>
-                <div className="flex justify-between text-white/60 text-sm">
-                  <span>{formatTime(currentProgress)}</span>
-                  <span>{formatTime(displayState.track.duration)}</span>
-                </div>
-              </div>
-
-              {/* Controls */}
-              <div className="mb-10">
-                {/* Playback Controls */}
-                <div className="flex items-center justify-center gap-6 mb-8">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShuffleOn(!shuffleOn);
-                    }}
-                    className={`transition-colors ${shuffleOn ? 'text-green-500' : 'text-white/70 hover:text-white'}`}
-                  >
-                    <Shuffle size={22} />
-                  </button>
-                  
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      skipToPrevious();
-                    }}
-                    className="text-white/70 hover:text-white transition-colors hover:scale-110 transform"
-                  >
-                    <SkipBack size={28} />
-                  </button>
-                  
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      togglePlayPause();
-                    }}
-                    className="w-14 h-14 rounded-full bg-white hover:scale-105 transition-transform flex items-center justify-center shadow-xl"
-                  >
-                    {displayState.isPlaying ? (
-                      <Pause size={24} className="text-black" fill="black" />
-                    ) : (
-                      <Play size={24} className="text-black ml-0.5" fill="black" />
-                    )}
-                  </button>
-                  
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      skipToNext();
-                    }}
-                    className="text-white/70 hover:text-white transition-colors hover:scale-110 transform"
-                  >
-                    <SkipForward size={28} />
-                  </button>
-                  
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setRepeatMode((repeatMode + 1) % 3);
-                    }}
-                    className={`transition-colors relative ${repeatMode > 0 ? 'text-green-500' : 'text-white/70 hover:text-white'}`}
-                  >
-                    <Repeat size={22} />
-                  </button>
-                </div>
-
-                {/* Like and Volume Controls */}
-                <div className="flex items-center gap-6">
-                  <button className="text-white/70 hover:text-white transition-colors">
-                    <Heart size={24} />
-                  </button>
-
-                  <div className="flex items-center gap-3 flex-1 max-w-xs">
-                    <Volume2 size={20} className="text-white/70" />
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={volume}
-                      onChange={(e) => handleVolumeChange(Number(e.target.value))}
-                      className="flex-1 h-1 bg-white/20 rounded-full appearance-none cursor-pointer slider"
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Side - Album Artwork */}
-            <div className="flex items-center">
-              <div className="relative group">
-                <div className="absolute -inset-8 bg-gradient-to-br from-purple-500/30 via-pink-500/30 to-orange-500/20 rounded-3xl blur-3xl"></div>
-                <img
-                  src={displayState.track.image}
-                  alt={displayState.track.name}
-                  className="relative w-[480px] h-[480px] object-cover rounded-lg shadow-2xl"
-                />
-                {/* Playing indicator */}
-                {displayState.isPlaying && (
-                  <div className="absolute bottom-4 right-4 bg-green-500 rounded-lg p-3 shadow-xl">
-                    <div className="flex gap-1 items-end h-4">
-                      <div className="w-1 bg-white rounded-full animate-pulse" style={{height: '60%'}}></div>
-                      <div className="w-1 bg-white rounded-full animate-pulse" style={{height: '40%', animationDelay: '0.2s'}}></div>
-                      <div className="w-1 bg-white rounded-full animate-pulse" style={{height: '80%', animationDelay: '0.4s'}}></div>
-                      <div className="w-1 bg-white rounded-full animate-pulse" style={{height: '50%', animationDelay: '0.6s'}}></div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </>
-        ) : (
-          <div className="text-center">
-            <div className="w-32 h-32 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <span className="text-6xl">🎵</span>
-            </div>
-            <p className="text-white/70 text-xl">No track playing</p>
-            {deviceReady && (
-              <p className="text-white/40 text-sm mt-2">Open Spotify and select "Spotify Multi Room"</p>
-            )}
-          </div>
-        )}
+        <NowPlaying
+          track={displayState?.track}
+          isPlaying={displayState?.isPlaying || false}
+          currentProgress={currentProgress}
+          volume={volume}
+          shuffleOn={shuffleOn}
+          repeatMode={repeatMode}
+          onTogglePlayPause={togglePlayPause}
+          onPrevious={skipToPrevious}
+          onNext={skipToNext}
+          onVolumeChange={handleVolumeChange}
+          onShuffleToggle={() => setShuffleOn(!shuffleOn)}
+          onRepeatToggle={() => setRepeatMode((repeatMode + 1) % 3)}
+          formatTime={formatTime}
+          deviceReady={deviceReady}
+        />
       </div>
 
       {/* Bottom spacing */}

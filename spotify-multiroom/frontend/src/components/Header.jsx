@@ -1,28 +1,35 @@
-import { FaSpotify } from 'react-icons/fa';
+import PropTypes from 'prop-types';
+import { MoreHorizontal, LogOut } from 'lucide-react';
 
-const Header = ({ deviceReady }) => {
+export default function Header({ deviceReady, onLogout }) {
   return (
-    <div className="flex justify-between items-center pb-6 border-b border-gray-200">
-      <div className="flex items-center gap-3">
-        <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl flex items-center justify-center shadow-md">
-          <FaSpotify className="w-7 h-7 text-white" />
+    <div className="w-full max-w-7xl flex items-center justify-between">
+      <button className="text-white/70 hover:text-white transition-colors">
+        <MoreHorizontal size={24} />
+      </button>
+      <div className="flex items-center gap-4">
+        {/* Connection Status */}
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10">
+          <div className={`w-2 h-2 rounded-full ${deviceReady ? 'bg-green-500' : 'bg-yellow-500'} animate-pulse`}></div>
+          <span className={`text-xs font-semibold ${deviceReady ? 'text-green-400' : 'text-yellow-400'}`}>
+            {deviceReady ? '🎵 Playing' : 'Connecting...'}
+          </span>
         </div>
-        <div>
-          <h1 className="text-2xl font-black text-gray-900">
-            Spotify Multi Room
-          </h1>
-          <p className="text-xs text-gray-500 font-medium">Synchronized Playback</p>
-        </div>
-      </div>
-      
-      <div className="flex items-center gap-2">
-        <div className={`w-2 h-2 rounded-full ${deviceReady ? 'bg-green-500' : 'bg-yellow-500'} animate-pulse`}></div>
-        <span className={`text-sm font-semibold ${deviceReady ? 'text-green-600' : 'text-yellow-600'}`}>
-          {deviceReady ? 'Ready' : 'Connecting...'}
-        </span>
+        <button 
+          onClick={onLogout}
+          className="text-white/70 hover:text-white transition-colors flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-white/10"
+          title="Logout"
+        >
+          <LogOut size={18} />
+          <span className="text-sm">Logout</span>
+        </button>
       </div>
     </div>
   );
+}
+
+Header.propTypes = {
+  deviceReady: PropTypes.bool.isRequired,
+  onLogout: PropTypes.func.isRequired
 };
 
-export default Header;
