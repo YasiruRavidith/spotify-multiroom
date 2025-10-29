@@ -4,7 +4,7 @@ export default function ProgressBar({ currentProgress, duration, formatTime }) {
   const progressPercentage = duration ? (currentProgress / duration) * 100 : 0;
 
   return (
-    <div className="mb-10">
+    <div className="mb-10 mt-10">
       <div className="relative w-full bg-white/20 h-1.5 rounded-full mb-2 cursor-pointer group">
         <div
           className="absolute top-0 left-0 h-full bg-white rounded-full transition-all duration-300"

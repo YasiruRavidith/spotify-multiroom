@@ -12,7 +12,10 @@ const SITE_PASSWORD = import.meta.env.VITE_SITE_PASSWORD || '';
 
 function App() {
   const [authenticated, setAuthenticated] = useState(!SITE_PASSWORD);
-  const [volume, setVolume] = useState(65);
+  const [volume, setVolume] = useState(() => {
+    const savedVolume = localStorage.getItem('spotify_volume');
+    return savedVolume ? parseInt(savedVolume) : 100;
+  });
   const [shuffleOn, setShuffleOn] = useState(false);
   const [repeatMode, setRepeatMode] = useState(0);
   const [currentProgress, setCurrentProgress] = useState(0);
@@ -40,6 +43,23 @@ function App() {
 
   // Use local playback state
   const displayState = playbackState;
+
+  // Set initial volume to player when ready
+  useEffect(() => {
+    if (playerRef.current && deviceReady && volume) {
+      playerRef.current.setVolume(volume / 100);
+    }
+  }, [deviceReady, playerRef, volume]);
+
+  // Sync shuffle and repeat state from Spotify
+  useEffect(() => {
+    if (displayState?.shuffle !== undefined) {
+      setShuffleOn(displayState.shuffle);
+    }
+    if (displayState?.repeat !== undefined) {
+      setRepeatMode(displayState.repeat);
+    }
+  }, [displayState?.shuffle, displayState?.repeat]);
 
   // Broadcast state changes to sync other devices
   useEffect(() => {
@@ -141,8 +161,49 @@ function App() {
 
   const handleVolumeChange = (value) => {
     setVolume(value);
+    localStorage.setItem('spotify_volume', value.toString());
     if (playerRef.current) {
       playerRef.current.setVolume(value / 100);
+    }
+  };
+
+  const handleShuffleToggle = async () => {
+    const newShuffleState = !shuffleOn;
+    setShuffleOn(newShuffleState);
+    
+    try {
+      const tokenResponse = await fetch(`${API_URL}/api/token`);
+      const { accessToken } = await tokenResponse.json();
+      
+      await fetch(`https://api.spotify.com/v1/me/player/shuffle?state=${newShuffleState}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      });
+    } catch (err) {
+      console.error('Shuffle toggle error:', err);
+    }
+  };
+
+  const handleRepeatToggle = async () => {
+    const newRepeatMode = (repeatMode + 1) % 3;
+    setRepeatMode(newRepeatMode);
+    
+    const repeatStates = ['off', 'context', 'track'];
+    
+    try {
+      const tokenResponse = await fetch(`${API_URL}/api/token`);
+      const { accessToken } = await tokenResponse.json();
+      
+      await fetch(`https://api.spotify.com/v1/me/player/repeat?state=${repeatStates[newRepeatMode]}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      });
+    } catch (err) {
+      console.error('Repeat toggle error:', err);
     }
   };
 
@@ -186,8 +247,8 @@ function App() {
           onPrevious={skipToPrevious}
           onNext={skipToNext}
           onVolumeChange={handleVolumeChange}
-          onShuffleToggle={() => setShuffleOn(!shuffleOn)}
-          onRepeatToggle={() => setRepeatMode((repeatMode + 1) % 3)}
+          onShuffleToggle={handleShuffleToggle}
+          onRepeatToggle={handleRepeatToggle}
           formatTime={formatTime}
           deviceReady={deviceReady}
         />

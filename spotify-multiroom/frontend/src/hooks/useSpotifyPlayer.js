@@ -121,6 +121,8 @@ const useSpotifyPlayer = (authenticated, API_URL, onSync) => {
         setPlaybackState({
           isPlaying: !state.paused,
           progress: state.position,
+          shuffle: state.shuffle,
+          repeat: state.repeat_mode,
           track: {
             name: track.name,
             artists: track.artists.map(a => a.name).join(', '),

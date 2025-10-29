@@ -14,7 +14,7 @@ export default function AlbumArtwork({ track, isPlaying }) {
         />
         {/* Playing indicator */}
         {isPlaying && (
-          <div className="absolute bottom-4 right-4 bg-green-500 rounded-lg p-3 shadow-xl">
+          <div className="absolute bottom-4 right-4 bg-green-500 rounded-lg p-20 shadow-xl">
             <div className="flex gap-1 items-end h-4">
               <div className="w-1 bg-white rounded-full animate-pulse" style={{height: '60%'}}></div>
               <div className="w-1 bg-white rounded-full animate-pulse" style={{height: '40%', animationDelay: '0.2s'}}></div>

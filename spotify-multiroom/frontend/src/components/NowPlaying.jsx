@@ -3,6 +3,7 @@ import ProgressBar from './ProgressBar';
 import PlaybackControls from './PlaybackControls';
 import VolumeControls from './VolumeControls';
 import AlbumArtwork from './AlbumArtwork';
+import { FaSpotify, FaLock } from 'react-icons/fa';
 
 export default function NowPlaying({
   track,
@@ -22,13 +23,13 @@ export default function NowPlaying({
 }) {
   if (!track) {
     return (
-      <div className="text-center">
-        <div className="w-32 h-32 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
-          <span className="text-6xl">🎵</span>
+      <div className="flex flex-1 flex-col items-center justify-center h-full text-center">
+        <div className="w-32 h-32 bg-white/10 rounded-2xl flex items-center justify-center mb-6">
+          <span className="text-6xl"><FaSpotify className="w-20 h-20 text-green-500" /></span>
         </div>
         <p className="text-white/70 text-xl">No track playing</p>
         {deviceReady && (
-          <p className="text-white/40 text-sm mt-2">Open Spotify and select &quot;Spotify Multi Room&quot;</p>
+          <p className="text-white/40 text-sm mt-2">Open Spotify and select "Spotify Multi Room"</p>
         )}
       </div>
     );
@@ -37,21 +38,21 @@ export default function NowPlaying({
   return (
     <>
       {/* Left Side - Controls and Info */}
-      <div className="flex-1 max-w-2xl">
+      <div className="flex-1 max-w-3xl ">
         {/* Song Info */}
-        <div className="mb-12">
-          <h1 className="text-white text-6xl font-bold mb-3 leading-tight">{track.name}</h1>
-          <p className="text-white/70 text-2xl">{track.artists}</p>
-        </div>
+          <div className="mb-8">
+            <h1 className="text-white text-5xl font-bold leading-tight">{track.name}</h1>
+            <p className="text-white/70 text-2xl" style={{ marginBottom: '100px' }}>{track.artists}</p>
+          </div>
 
-        {/* Progress Bar */}
-        <ProgressBar
-          currentProgress={currentProgress}
-          duration={track.duration}
-          formatTime={formatTime}
-        />
+          {/* Progress Bar */}
+          <ProgressBar
+            currentProgress={currentProgress}
+            duration={track.duration}
+            formatTime={formatTime}
+          />
 
-        {/* Controls */}
+          {/* Controls */}
         <div className="mb-10">
           {/* Playback Controls */}
           <PlaybackControls
@@ -66,10 +67,14 @@ export default function NowPlaying({
           />
 
           {/* Like and Volume Controls */}
+          <div style={{ marginTop: '50px' }}>
           <VolumeControls
             volume={volume}
             onVolumeChange={onVolumeChange}
+            
           />
+          </div>
+          
         </div>
       </div>
 
