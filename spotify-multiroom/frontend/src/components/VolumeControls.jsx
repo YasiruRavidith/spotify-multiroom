@@ -7,7 +7,7 @@ export default function VolumeControls({ volume, onVolumeChange }) {
       style={{ 
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'flex-end',
+        justifyContent: 'flex-start',
         width: '100%'
       }}
     >
