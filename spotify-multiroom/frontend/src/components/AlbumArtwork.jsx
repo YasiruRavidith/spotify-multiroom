@@ -14,12 +14,13 @@ export default function AlbumArtwork({ track, isPlaying }) {
         />
         {/* Playing indicator */}
         {isPlaying && (
-          <div className="absolute bottom-4 right-4 bg-green-500 rounded-lg p-20 shadow-xl">
-            <div className="flex gap-1 items-end h-4">
+          <div className="absolute bottom-2 right-2 bg-green-500 rounded-lg p-20 shadow-xl" style={{ padding: '5px 5px', gap: '1px' }}>
+            <div className="flex gap-1 items-end h-4" style={{gap: '1px' }}>
               <div className="w-1 bg-white rounded-full animate-pulse" style={{height: '60%'}}></div>
               <div className="w-1 bg-white rounded-full animate-pulse" style={{height: '40%', animationDelay: '0.2s'}}></div>
-              <div className="w-1 bg-white rounded-full animate-pulse" style={{height: '80%', animationDelay: '0.4s'}}></div>
+              <div className="w-1 bg-white rounded-full animate-pulse" style={{height: '90%', animationDelay: '0.4s'}}></div>
               <div className="w-1 bg-white rounded-full animate-pulse" style={{height: '50%', animationDelay: '0.6s'}}></div>
+              <div className="w-1 bg-white rounded-full animate-pulse" style={{height: '70%', animationDelay: '0.8s'}}></div>
             </div>
           </div>
         )}

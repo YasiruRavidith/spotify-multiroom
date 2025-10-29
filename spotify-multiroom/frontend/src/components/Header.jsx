@@ -8,15 +8,19 @@ export default function Header({ deviceReady, onLogout }) {
           onClick={onLogout}
           className="text-white/70 hover:text-white transition-colors flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-white/10"
           title="Logout"
+          style={{ padding: '8px 15px', gap: '5px' }}
         >
           <LogOut size={18} />
           <span className="text-sm">Logout</span>
         </button>
       <div className="flex items-center gap-4">
         {/* Connection Status */}
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10" style={{ gap: '10px' }}>
-          <div className={`w-2 h-2 rounded-full ${deviceReady ? 'bg-green-500' : 'bg-yellow-500'} animate-pulse`}></div>
-          <span className={`text-xs font-semibold ${deviceReady ? 'text-green-400' : 'text-yellow-400'}`}>
+        <div 
+          className="flex items-center rounded-full bg-white/10"
+          style={{ padding: '8px 15px', gap: '5px' }}
+        >
+          <div className={`w-2.5 h-2.5 rounded-full ${deviceReady ? 'bg-green-500' : 'bg-yellow-500'} animate-pulse`}></div>
+          <span className={`text-sm font-semibold ${deviceReady ? 'text-green-400' : 'text-yellow-400'}`}>
             {deviceReady ? '🎵 Playing' : 'Connecting...'}
           </span>
         </div>
