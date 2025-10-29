@@ -235,7 +235,7 @@ function App() {
       )}
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center w-full max-w-7xl gap-16">
+      <div className="flex-1 flex items-center justify-center w-full max-w-7xl gap-16 px-4 md:px-8">
         <NowPlaying
           track={displayState?.track}
           isPlaying={displayState?.isPlaying || false}

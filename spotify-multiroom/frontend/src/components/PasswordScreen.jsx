@@ -34,41 +34,114 @@ const PasswordScreen = ({ onAuthenticate }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-900 via-gray-900 to-black flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/20">
+    <div 
+      className="min-h-screen bg-linear-to-b from-purple-900 via-gray-900 to-black flex items-center justify-center"
+      style={{ padding: '16px' }}
+    >
+      <div style={{ width: '100%', maxWidth: '480px' }}>
+        <div 
+          style={{
+            background: 'rgba(255, 255, 255, 0.05)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '32px',
+            padding: '48px',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
+            border: '1px solid rgba(255, 255, 255, 0.1)'
+          }}
+        >
           {/* Logo */}
-          <div className="flex justify-center mb-6">
-            <div className="w-24 h-24 bg-green-500 rounded-3xl flex items-center justify-center shadow-xl">
-              <FaSpotify className="w-14 h-14 text-white" />
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '32px' }}>
+            <div 
+              style={{
+                width: '120px',
+                height: '120px',
+                background: '#1DB954',
+                borderRadius: '24px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 8px 32px rgba(29, 185, 84, 0.4)'
+              }}
+            >
+              <FaSpotify style={{ width: '64px', height: '64px', color: 'white' }} />
             </div>
           </div>
 
           {/* Title */}
-          <h1 className="text-3xl font-black text-center mb-2 text-white">
+          <h1 
+            style={{
+              fontSize: '36px',
+              fontWeight: '900',
+              textAlign: 'center',
+              marginBottom: '12px',
+              color: 'white',
+              letterSpacing: '-0.5px'
+            }}
+          >
             Spotify Multi Room
           </h1>
-          <p className="text-white/60 text-center mb-8 font-medium">
+          <p 
+            style={{
+              color: 'rgba(255, 255, 255, 0.6)',
+              textAlign: 'center',
+              marginBottom: '48px',
+              fontSize: '16px'
+            }}
+          >
             Enter password to continue
           </p>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="relative">
-              <FaLock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/40" />
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div style={{ position: 'relative' }}>
+              <FaLock 
+                style={{
+                  position: 'absolute',
+                  left: '16px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: 'rgba(255, 255, 255, 0.4)',
+                  fontSize: '18px'
+                }}
+              />
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
-                className="w-full pl-12 pr-4 py-4 border-2 border-white/20 rounded-2xl focus:outline-none focus:border-green-500 transition bg-white/5 text-white placeholder-white/40"
+                style={{
+                  width: '100%',
+                  paddingLeft: '48px',
+                  paddingRight: '16px',
+                  paddingTop: '16px',
+                  paddingBottom: '16px',
+                  border: '2px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '16px',
+                  outline: 'none',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  color: 'white',
+                  fontSize: '16px',
+                  transition: 'all 0.3s'
+                }}
+                onFocus={(e) => e.target.style.borderColor = '#1DB954'}
+                onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)'}
                 autoFocus
                 disabled={loading}
               />
             </div>
 
             {error && (
-              <div className="bg-red-500/20 border-2 border-red-500/40 rounded-2xl p-4 text-red-300 text-sm font-medium">
+              <div 
+                style={{
+                  background: 'rgba(239, 68, 68, 0.2)',
+                  border: '2px solid rgba(239, 68, 68, 0.4)',
+                  borderRadius: '16px',
+                  padding: '16px',
+                  color: '#FCA5A5',
+                  fontSize: '14px',
+                  fontWeight: '500'
+                }}
+              >
                 {error}
               </div>
             )}
@@ -76,7 +149,23 @@ const PasswordScreen = ({ onAuthenticate }) => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-2xl transition shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transform"
+              style={{
+                width: '100%',
+                background: loading ? '#15803d' : '#1DB954',
+                color: 'white',
+                fontWeight: '700',
+                paddingTop: '16px',
+                paddingBottom: '16px',
+                borderRadius: '16px',
+                border: 'none',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                fontSize: '16px',
+                boxShadow: '0 4px 14px rgba(29, 185, 84, 0.4)',
+                transition: 'all 0.2s',
+                opacity: loading ? 0.5 : 1
+              }}
+              onMouseEnter={(e) => !loading && (e.target.style.transform = 'scale(1.02)')}
+              onMouseLeave={(e) => (e.target.style.transform = 'scale(1)')}
             >
               {loading ? 'Verifying...' : 'Enter'}
             </button>

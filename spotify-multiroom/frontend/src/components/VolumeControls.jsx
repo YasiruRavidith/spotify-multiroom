@@ -3,15 +3,43 @@ import { Heart, Volume2 } from 'lucide-react';
 
 export default function VolumeControls({ volume, onVolumeChange }) {
   return (
-    <div className="flex items-center gap-6">
-
-
-      <div className="flex items-center gap-3 flex-1 max-w-xs">
-        <Volume2 size={20} className="text-white/70" />
-        <div className="relative flex-1 h-1 bg-white/20 rounded-full">
+    <div 
+      style={{ 
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        width: '100%'
+      }}
+    >
+      <div 
+        style={{ 
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          width: '200px'
+        }}
+      >
+        <Volume2 
+          size={20} 
+          className="text-white/70"
+          style={{ flexShrink: 0 }}
+        />
+        <div 
+          className="relative bg-white/20 rounded-full"
+          style={{ 
+            flex: 1,
+            height: '4px'
+          }}
+        >
           <div 
-            className="absolute top-0 left-0 h-full bg-white rounded-full transition-all duration-150"
-            style={{ width: `${volume}%` }}
+            className="absolute bg-white rounded-full"
+            style={{ 
+              top: 0,
+              left: 0,
+              height: '100%',
+              width: `${volume}%`,
+              transition: 'width 0.15s'
+            }}
           ></div>
           <input
             type="range"
@@ -19,7 +47,15 @@ export default function VolumeControls({ volume, onVolumeChange }) {
             max="100"
             value={volume}
             onChange={(e) => onVolumeChange(Number(e.target.value))}
-            className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              opacity: 0,
+              cursor: 'pointer'
+            }}
             onClick={(e) => e.stopPropagation()}
           />
         </div>

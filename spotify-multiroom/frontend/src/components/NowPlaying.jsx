@@ -36,24 +36,49 @@ export default function NowPlaying({
   }
 
   return (
-    <>
-      {/* Left Side - Controls and Info */}
-      <div className="flex-1 max-w-3xl ">
+    <div 
+      className="flex flex-col md:flex-row items-center justify-center w-full"
+      style={{ 
+        gap: '32px',
+        paddingLeft: '16px',
+        paddingRight: '16px'
+      }}
+    >
+      {/* Mobile: Album Artwork at top, Desktop: at right */}
+      <div className="order-1 md:order-2">
+        <AlbumArtwork track={track} isPlaying={isPlaying} />
+      </div>
+
+      {/* Mobile: Controls at bottom, Desktop: at left */}
+      <div 
+        className="flex-1 w-full order-2 md:order-1"
+        style={{ maxWidth: '768px' }}
+      >
         {/* Song Info */}
-          <div className="mb-8">
-            <h1 className="text-white text-5xl font-bold leading-tight">{track.name}</h1>
-            <p className="text-white/70 text-2xl" style={{ marginBottom: '100px' }}>{track.artists}</p>
-          </div>
+        <div style={{ marginBottom: '32px' }}>
+          <h1 
+            className="text-white font-bold leading-tight text-center md:text-left"
+            style={{ fontSize: 'clamp(28px, 5vw, 48px)' }}
+          >
+            {track.name}
+          </h1>
+          <p 
+            className="text-white/70 text-center md:text-left"
+            style={{ fontSize: 'clamp(18px, 3vw, 24px)', marginTop: '12px' }}
+          >
+            {track.artists}
+          </p>
+        </div>
 
-          {/* Progress Bar */}
-          <ProgressBar
-            currentProgress={currentProgress}
-            duration={track.duration}
-            formatTime={formatTime}
-          />
+        {/* Progress Bar */}
+        <ProgressBar
+          currentProgress={currentProgress}
+          duration={track.duration}
+          formatTime={formatTime}
+        />
 
-          {/* Controls */}
-        <div className="mb-10">
+        {/* Controls */}
+        <div style={{ marginTop: '32px' }}>
           {/* Playback Controls */}
           <PlaybackControls
             isPlaying={isPlaying}
@@ -66,21 +91,19 @@ export default function NowPlaying({
             onRepeatToggle={onRepeatToggle}
           />
 
-          {/* Like and Volume Controls */}
-          <div style={{ marginTop: '50px' }}>
-          <VolumeControls
-            volume={volume}
-            onVolumeChange={onVolumeChange}
-            
-          />
+          {/* Like and Volume Controls - Hidden on mobile */}
+          <div 
+            className="hidden md:flex md:justify-start"
+            style={{ marginTop: '32px' }}
+          >
+            <VolumeControls
+              volume={volume}
+              onVolumeChange={onVolumeChange}
+            />
           </div>
-          
         </div>
       </div>
-
-      {/* Right Side - Album Artwork */}
-      <AlbumArtwork track={track} isPlaying={isPlaying} />
-    </>
+    </div>
   );
 }
 
