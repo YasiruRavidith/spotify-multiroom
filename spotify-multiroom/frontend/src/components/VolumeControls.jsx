@@ -32,7 +32,7 @@ export default function VolumeControls({ volume, onVolumeChange }) {
           }}
         >
           <div 
-            className="absolute bg-white rounded-full"
+            className="absolute bg-red-500 rounded-full"
             style={{ 
               top: 0,
               left: 0,

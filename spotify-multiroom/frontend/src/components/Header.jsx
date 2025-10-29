@@ -28,7 +28,7 @@ export default function Header({ deviceReady, onLogout, currentDeviceId }) {
         >
           <div className={`w-2.5 h-2.5 rounded-full ${deviceReady ? 'bg-green-500' : 'bg-yellow-500'} animate-pulse`}></div>
           <span className={`text-xs md:text-sm font-semibold ${deviceReady ? 'text-green-400' : 'text-yellow-400'}`}>
-            {deviceReady ? '🎵 Playing' : 'Connecting...'}
+            {deviceReady ? 'Online' : 'Connecting...'}
           </span>
         </div>
       </div>

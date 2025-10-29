@@ -55,15 +55,20 @@ const PasswordScreen = ({ onAuthenticate }) => {
               style={{
                 width: '120px',
                 height: '120px',
-                background: '#1DB954',
+                background: '#EF4444',
                 borderRadius: '24px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: '0 8px 32px rgba(29, 185, 84, 0.4)'
+                boxShadow: '0 8px 32px rgba(239, 68, 68, 0.4)',
+                padding: '20px'
               }}
             >
-              <FaSpotify style={{ width: '64px', height: '64px', color: 'white' }} />
+              <img 
+                src="/spotify.png" 
+                alt="Spotify" 
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+              />
             </div>
           </div>
 
@@ -123,7 +128,7 @@ const PasswordScreen = ({ onAuthenticate }) => {
                   fontSize: '16px',
                   transition: 'all 0.3s'
                 }}
-                onFocus={(e) => e.target.style.borderColor = '#1DB954'}
+                onFocus={(e) => e.target.style.borderColor = '#EF4444'}
                 onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)'}
                 autoFocus
                 disabled={loading}
@@ -151,7 +156,7 @@ const PasswordScreen = ({ onAuthenticate }) => {
               disabled={loading}
               style={{
                 width: '100%',
-                background: loading ? '#15803d' : '#1DB954',
+                background: loading ? '#DC2626' : '#EF4444',
                 color: 'white',
                 fontWeight: '700',
                 paddingTop: '16px',
@@ -160,7 +165,7 @@ const PasswordScreen = ({ onAuthenticate }) => {
                 border: 'none',
                 cursor: loading ? 'not-allowed' : 'pointer',
                 fontSize: '16px',
-                boxShadow: '0 4px 14px rgba(29, 185, 84, 0.4)',
+                boxShadow: '0 4px 14px rgba(239, 68, 68, 0.4)',
                 transition: 'all 0.2s',
                 opacity: loading ? 0.5 : 1
               }}

@@ -18,7 +18,7 @@ export default function PlaybackControls({
           e.stopPropagation();
           onShuffleToggle();
         }}
-        className={`transition-colors ${shuffleOn ? 'text-green-500' : 'text-white/70 hover:text-white'}`}
+        className={`transition-colors ${shuffleOn ? 'text-red-500' : 'text-white/70 hover:text-white'}`}
       >
         <Shuffle size={22} />
       </button>
@@ -28,7 +28,7 @@ export default function PlaybackControls({
           e.stopPropagation();
           onPrevious();
         }}
-        className="text-white/70 hover:text-white transition-colors hover:scale-110 transform"
+        className="text-red-200/70 hover:text-red-500 transition-colors hover:scale-110 transform"
       >
         <SkipBack size={28} />
       </button>
@@ -38,12 +38,12 @@ export default function PlaybackControls({
           e.stopPropagation();
           onTogglePlayPause();
         }}
-        className="w-14 h-14 rounded-full bg-white hover:scale-105 transition-transform flex items-center justify-center shadow-xl"
+        className="w-14 h-14 rounded-full bg-red-500 hover:scale-105 transition-transform flex items-center justify-center shadow-xl"
       >
         {isPlaying ? (
           <Pause size={24} className="text-black" fill="black" />
         ) : (
-          <Play size={24} className="text-black ml-0.5" fill="black" />
+          <Play size={24} className="text-black ml-0.5 " fill="black" />
         )}
       </button>
       
@@ -52,7 +52,7 @@ export default function PlaybackControls({
           e.stopPropagation();
           onNext();
         }}
-        className="text-white/70 hover:text-white transition-colors hover:scale-110 transform"
+        className="text-red-200/70 hover:text-red-500 transition-colors hover:scale-110 transform"
       >
         <SkipForward size={28} />
       </button>
@@ -62,12 +62,12 @@ export default function PlaybackControls({
           e.stopPropagation();
           onRepeatToggle();
         }}
-        className={`transition-colors relative ${repeatMode > 0 ? 'text-green-500' : 'text-white/70 hover:text-white'}`}
+        className={`transition-colors relative ${repeatMode > 0 ? 'text-red-500' : 'text-white/70 hover:text-white'}`}
         title={repeatMode === 0 ? 'Repeat Off' : repeatMode === 1 ? 'Repeat All' : 'Repeat One'}
       >
         <Repeat size={22} />
         {repeatMode === 2 && (
-          <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full flex items-center justify-center text-[8px] font-bold text-white">
+          <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center text-[8px] font-bold text-white">
             1
           </span>
         )}

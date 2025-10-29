@@ -26,7 +26,7 @@ export default function AlbumArtwork({ track, isPlaying }) {
         {/* Playing indicator */}
         {isPlaying && (
           <div 
-            className="absolute bottom-2 right-2 bg-green-500 rounded-lg shadow-xl"
+            className="absolute bottom-2 right-2 bg-red-500 rounded-lg shadow-xl"
             style={{ padding: '8px' }}
           >
             <div className="flex items-end" style={{ gap: '2px', height: '16px' }}>

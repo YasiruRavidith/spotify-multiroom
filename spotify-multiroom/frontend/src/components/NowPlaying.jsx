@@ -25,7 +25,7 @@ export default function NowPlaying({
     return (
       <div className="flex flex-1 flex-col items-center justify-center h-full text-center">
         <div className="w-32 h-32 bg-white/10 rounded-2xl flex items-center justify-center mb-6">
-          <span className="text-6xl"><FaSpotify className="w-20 h-20 text-green-500" /></span>
+          <span className="text-6xl"><FaSpotify className="w-20 h-20 text-red-500" /></span>
         </div>
         <p className="text-white/70 text-xl">No track playing</p>
         {deviceReady && (
@@ -55,7 +55,7 @@ export default function NowPlaying({
         style={{ maxWidth: '768px' }}
       >
         {/* Song Info */}
-        <div style={{ marginBottom: '32px' }}>
+        <div style={{ marginBottom: '110px' }}>
           <h1 
             className="text-white font-bold leading-tight text-center md:text-left"
             style={{ fontSize: 'clamp(28px, 5vw, 48px)' }}
@@ -64,7 +64,7 @@ export default function NowPlaying({
           </h1>
           <p 
             className="text-white/70 text-center md:text-left"
-            style={{ fontSize: 'clamp(18px, 3vw, 24px)', marginTop: '12px' }}
+            style={{ fontSize: 'clamp(18px, 3vw, 24px)', marginTop: '6px' }}
           >
             {track.artists}
           </p>

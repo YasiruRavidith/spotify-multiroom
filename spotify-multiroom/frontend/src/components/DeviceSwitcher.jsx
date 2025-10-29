@@ -85,7 +85,7 @@ const DeviceSwitcher = ({ currentDeviceId }) => {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 hover:bg-white/10 transition-colors rounded-full bg-white/10 ml-5 text-gray-300"
+        className="flex items-center gap-2 px-3 py-2 hover:bg-white/10 transition-colors rounded-full bg-white/10 ml-5 text-red-400"
         style={{ padding: '8px 12px', gap: '2px'}}
         disabled={isLoading}
       >
@@ -115,9 +115,9 @@ const DeviceSwitcher = ({ currentDeviceId }) => {
           />
           
           {/* Dropdown menu */}
-          <div className="absolute top-full right-0 mt-2 w-64 bg-zinc-900 border border-white/10 rounded-3xl shadow-xl z-50 overflow-hidden" style={{ padding: '8px 12px', gap: '2px'}}>
+          <div className="absolute top-full right-0 mt-2 w-64 bg-white/5 border border-white/10 rounded-3xl shadow-xl z-50 overflow-hidden" style={{ padding: '8px 12px', gap: '2px',marginTop: '4px' }}>
             <div className="p-2">
-              <div className="text-xs text-gray-400 px-3 py-2 font-semibold">
+              <div className="text-xs text-gray-400 px-3 py-2 font-semibold" style={{marginLeft:'5px'}}>
                 Available Devices
               </div>
               
@@ -132,9 +132,9 @@ const DeviceSwitcher = ({ currentDeviceId }) => {
                       key={device.id}
                       onClick={() => transferPlayback(device.id)}
                       disabled={device.is_active || isLoading}
-                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-colors text-left ${
+                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-2xl transition-colors text-left ${
                         device.is_active
-                          ? 'bg-green-500/20 text-green-400'
+                          ? 'bg-red-500/20 text-red-400'
                           : 'hover:bg-white/10 text-white'
                       } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                        style={{ padding: '5px 8px', gap: '2px'}}
