@@ -62,7 +62,7 @@ const useSpotifyPlayer = (authenticated, API_URL, onSync) => {
       await tokenResponse.json();
 
       const player = new window.Spotify.Player({
-        name: 'Spotify Multi-Room Player',
+        name: 'Spotify Public Player',
         getOAuthToken: async (cb) => {
           const response = await fetch(`${API_URL}/api/token`);
           const data = await response.json();
