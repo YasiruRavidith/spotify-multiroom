@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { FaSpotify} from 'react-icons/fa';
 
 export default function AlbumArtwork({ track, isPlaying }) {
   if (!track) return null;
@@ -26,16 +27,10 @@ export default function AlbumArtwork({ track, isPlaying }) {
         {/* Playing indicator */}
         {isPlaying && (
           <div 
-            className="absolute bottom-2 right-2 bg-red-500 rounded-lg shadow-xl"
-            style={{ padding: '8px' }}
+            className="absolute bottom-2 right-2 "
+            style={{ padding: '2px' }}
           >
-            <div className="flex items-end" style={{ gap: '2px', height: '16px' }}>
-              <div className="w-1 bg-white rounded-full animate-pulse" style={{height: '60%'}}></div>
-              <div className="w-1 bg-white rounded-full animate-pulse" style={{height: '40%', animationDelay: '0.2s'}}></div>
-              <div className="w-1 bg-white rounded-full animate-pulse" style={{height: '90%', animationDelay: '0.4s'}}></div>
-              <div className="w-1 bg-white rounded-full animate-pulse" style={{height: '50%', animationDelay: '0.6s'}}></div>
-              <div className="w-1 bg-white rounded-full animate-pulse" style={{height: '70%', animationDelay: '0.8s'}}></div>
-            </div>
+            <FaSpotify className="w-10 h-10 animate-pulse text-red-500" />
           </div>
         )}
       </div>
